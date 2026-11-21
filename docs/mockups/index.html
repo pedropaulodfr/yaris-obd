@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Yaris OBD — Laboratório de layouts</title>
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/layouts.css">
+</head>
+<body>
+
+<header class="top">
+  <div class="top-brand">
+    <span class="logo">◈</span>
+    <div>
+      <h1>Yaris OBD · Laboratório de layouts</h1>
+      <p>12 propostas para a tela da central (1920 × 720) · dados simulados em tempo real</p>
+    </div>
+  </div>
+  <div class="top-actions">
+    <label class="ctl">
+      <span>Cenário</span>
+      <select id="scenario" aria-label="Cenário de simulação"></select>
+    </label>
+    <button class="btn" id="pause" type="button" aria-pressed="false">Pausar</button>
+  </div>
+</header>
+
+<nav class="chips" id="chips" aria-label="Ir para um layout"></nav>
+
+<main class="grid" id="grid"></main>
+
+<footer class="foot">
+  <span><b>Nada aqui está implementado no app.</b> São protótipos para aprovação visual.</span>
+  <span>Cenário muda o comportamento simulado. Clique numa tela (ou num atalho acima) para ampliar.</span>
+  <span>Setas ← → navegam; Esc fecha.</span>
+</footer>
+
+<div class="viewer" id="viewer" hidden>
+  <div class="viewer-bar">
+    <div class="viewer-title"><b id="vname">—</b><span id="vdesc"></span></div>
+    <div class="viewer-nav">
+      <button type="button" data-nav="prev" aria-label="Layout anterior">←</button>
+      <span id="vindex">1 / 12</span>
+      <button type="button" data-nav="next" aria-label="Próximo layout">→</button>
+      <button type="button" data-close>Fechar</button>
+    </div>
+  </div>
+  <div class="viewer-frame"><div class="frame" id="vframe"></div></div>
+  <div class="viewer-hint">← → para navegar · Esc para fechar</div>
+</div>
+
+<!-- =====================================================================
+     01 · AGULHAS
+     ===================================================================== -->
+<template id="tpl-needles">
+  <div class="stage lv-needles">
+    <div class="hdr">
+      <span class="brand">Yaris OBD</span>
+      <span class="badge"><i></i><span>Adaptador virtual — dados simulados</span></span>
+      <span class="fps"><b data-bind="fps">14</b> fps</span>
+    </div>
+
+    <div class="nd-body">
+      <div class="dials">
+        <div class="dial">
+          <svg class="face" viewBox="0 0 420 420" aria-hidden="true">
+            <g data-ticks></g>
+            <g data-labels></g>
+          </svg>
+          <div class="needle" data-needle="speed"></div>
+          <div class="cap"></div>
+          <div class="read"><b class="num" data-bind="speed">0</b><span class="unit">km/h</span></div>
+          <div class="name">Velocidade</div>
+        </div>
+        <div class="dial">
+          <svg class="face" viewBox="0 0 420 420" aria-hidden="true">
+            <path class="redzone" data-redzone></path>
+            <g data-ticks></g>
+            <g data-labels></g>
+          </svg>
+          <div class="needle" data-needle="rpm"></div>
+          <div class="cap"></div>
+          <div class="read"><b class="num" data-bind="rpm">0</b><span class="unit">rpm</span></div>
+          <div class="name">Rotação</div>
+        </div>
+      </div>
+
+      <aside class="nd-side">
+        <div class="panel nd-water">
+          <div class="lbl">Temperatura da água</div>
+          <div class="val"><b class="num" data-bind="coolant">—</b><span class="unit">°C</span></div>
+          <div class="thermo"><i data-bind="waterFill"></i></div>
+          <div class="thermo-scale"><span>40</span><span>90</span><span>120</span></div>
+        </div>
+        <div class="panel nd-mini">
+          <div class="lbl">Combustível</div>
+          <div class="val"><b class="num" data-bind="fuel">—</b><span class="unit">%</span></div>
+          <div class="track"><i data-bind="fuelFill"></i></div>
+        </div>
+        <div class="panel nd-mini">
+          <div class="lbl">Bateria</div>
+          <div class="val"><b class="num" data-bind="voltage">—</b><span class="unit">V</span></div>
+          <div class="track"><i data-bind="voltFill"></i></div>
+        </div>
+        <div class="panel nd-mini nd-gear">
+          <div class="lbl">Marcha</div>
+          <div class="val"><b class="num" data-bind="gear">1</b></div>
+        </div>
+      </aside>
+    </div>
+
+    <div class="ftr">
+      <span>MAP <b data-bind="map">—</b> kPa</span>
+      <span>MAF <b data-bind="maf">—</b> g/s</span>
+      <span>AR <b data-bind="intake">—</b> °C</span>
+      <span>BAT <b data-bind="voltage">—</b> V</span>
+      <span>COMB <b data-bind="fuel">—</b> %</span>
+    </div>
+  </div>
+</template>
+
+<!-- =====================================================================
+     02 · FITAS
+     ===================================================================== -->
+<template id="tpl-tape">
+  <div class="stage lv-tape">
+    <div class="hdr">
+      <span class="brand">Yaris OBD</span>
+      <span class="badge"><i></i><span>Adaptador virtual — dados simulados</span></span>
+      <span class="fps"><b data-bind="fps">14</b> fps</span>
+    </div>
+
+    <div class="tp-body">
+      <div class="tp-main">
+        <div class="tp-window">
+          <div class="tp-col" data-tape="speed"></div>
+          <div class="tp-guide g1"></div>
+          <div class="tp-guide g2"></div>
+          <div class="tp-bracket l"></div>
+          <div class="tp-bracket r"></div>
+        </div>
+        <div class="tp-unit">km/h</div>
+      </div>
+
+      <div class="tp-sub">
+        <div class="tp-window small">
+          <div class="tp-col" data-tape="rpm"></div>
+          <div class="tp-guide g1"></div>
+          <div class="tp-guide g2"></div>
+          <div class="tp-bracket l"></div>
+          <div class="tp-bracket r"></div>
+        </div>
+        <div class="tp-unit">rpm</div>
+      </div>
+
+      <aside class="tp-cards">
+        <div class="panel">
+          <div class="lbl">Água</div>
+          <div class="val"><b class="num" data-bind="coolant">—</b><span class="unit">°C</span></div>
+          <div class="track"><i data-bind="waterFill"></i></div>
+        </div>
+        <div class="panel">
+          <div class="lbl">Carga</div>
+          <div class="val"><b class="num" data-bind="load">—</b><span class="unit">%</span></div>
+          <div class="track"><i data-bind="loadFill"></i></div>
+        </div>
+        <div class="panel">
+          <div class="lbl">Acelerador</div>
+          <div class="val"><b class="num" data-bind="throttle">—</b><span class="unit">%</span></div>
+          <div class="track"><i data-bind="throttleFill"></i></div>
+        </div>
+        <div class="panel">
+          <div class="lbl">Bateria</div>
+          <div class="val"><b class="num" data-bind="voltage">—</b><span class="unit">V</span></div>
+          <div class="track"><i data-bind="voltFill"></i></div>
+        </div>
+      </aside>
+    </div>
+
+    <div class="ftr">
+      <span>MAP <b data-bind="map">—</b> kPa</span>
+      <span>MAF <b data-bind="maf">—</b> g/s</span>
+      <span>AR <b data-bind="intake">—</b> °C</span>
+      <span>COMB <b data-bind="fuel">—</b> %</span>
+      <span>MARCHA <b data-bind="gear">1</b></span>
+    </div>
+  </div>
+</template>
+
+<!-- =====================================================================
+     03 · COCKPIT ESPORTIVO
+     ===================================================================== -->
+<template id="tpl-shift">
+  <div class="stage lv-shift">
+    <div class="hdr">
+      <span class="brand">Yaris OBD</span>
+      <span class="badge"><i></i><span>Adaptador virtual — dados simulados</span></span>
+      <span class="fps"><b data-bind="fps">14</b> fps</span>
+    </div>
+
+    <div class="sh-body">
+      <div class="sh-top">
+        <div class="sh-rpm"><b class="num" data-bind="rpm">—</b><span class="unit">rpm</span></div>
+        <div class="leds" data-leds></div>
+        <div class="sh-shift" data-shift><span>SHIFT</span></div>
+      </div>
+
+      <div class="sh-main">
+        <div class="sh-speed">
+          <b class="num" data-bind="speed">—</b>
+          <span class="unit">km/h</span>
+        </div>
+        <div class="sh-gear">
+          <span class="lbl">Marcha</span>
+          <b class="num" data-bind="gearLabel">D1</b>
+          <span class="sh-mode" data-bind="modeLabel">modo D</span>
+        </div>
+        <div class="sh-aux">
+          <div class="sh-item"><span class="lbl">Água</span><b class="num" data-bind="coolant">—</b><em>°C</em></div>
+          <div class="sh-item"><span class="lbl">Bateria</span><b class="num" data-bind="voltage">—</b><em>V</em></div>
+          <div class="sh-item"><span class="lbl">Combustível</span><b class="num" data-bind="fuel">—</b><em>%</em></div>
+        </div>
+      </div>
+
+      <div class="sh-bars">
+        <div class="sh-bar">
+          <div class="row"><span class="lbl">Acelerador</span><b data-bind="throttle">—</b><em>%</em></div>
+          <div class="track"><i data-bind="throttleFill"></i></div>
+        </div>
+        <div class="sh-bar">
+          <div class="row"><span class="lbl">Carga</span><b data-bind="load">—</b><em>%</em></div>
+          <div class="track"><i data-bind="loadFill"></i></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ftr">
+      <span>MAP <b data-bind="map">—</b> kPa</span>
+      <span>MAF <b data-bind="maf">—</b> g/s</span>
+      <span>IGNIÇÃO <b data-bind="timing">—</b> °</span>
+      <span>AR <b data-bind="intake">—</b> °C</span>
+    </div>
+  </div>
+</template>
+
+<!-- =====================================================================
+     04 · ECO
+     ===================================================================== -->
+<template id="tpl-eco">
+  <div class="stage lv-eco">
+    <div class="hdr">
+      <span class="brand">Yaris OBD</span>
+      <span class="badge"><i></i><span>Adaptador virtual — dados simulados</span></span>
+      <span class="fps"><b data-bind="fps">14</b> fps</span>
+    </div>
+
+    <div class="ec-body">
+      <div class="ec-ring">
+        <svg viewBox="0 0 240 240" aria-hidden="true">
+          <circle class="ring-bg" cx="120" cy="120" r="98"></circle>
+          <circle class="ring-fg" data-ring cx="120" cy="120" r="98" transform="rotate(-90 120 120)"></circle>
+        </svg>
+        <div class="ec-ring-in">
+          <b class="num" data-bind="ecoScore">—</b>
+          <span>Eficiência</span>
+        </div>
+      </div>
+
+      <div class="ec-main">
+        <div class="lbl">Consumo instantâneo</div>
+        <div class="ec-cons"><b class="num" data-bind="cons">—</b><span class="unit" data-bind="consUnit">L/100 km</span></div>
+        <div class="ec-speed"><b class="num" data-bind="speed">—</b><span class="unit">km/h</span></div>
+
+        <div class="ec-chart">
+          <svg viewBox="0 0 900 90" preserveAspectRatio="none" aria-hidden="true">
+            <path class="ec-area" data-path="ecoArea"></path>
+            <path class="ec-line" data-path="ecoLine"></path>
+          </svg>
+          <div class="ec-chart-foot">
+            <span>Eficiência · últimos 30 s</span>
+            <span>mín <b data-bind="ecoMin">—</b></span>
+          </div>
+        </div>
+      </div>
+
+      <aside class="ec-side">
+        <div class="leaves" data-leaves></div>
+        <div class="ec-tip" data-bind="tip">—</div>
+        <div class="ec-minis">
+          <div><span class="lbl">Autonomia</span><b class="num" data-bind="range">—</b><em>km</em></div>
+          <div><span class="lbl">Média</span><b class="num" data-bind="avgCons">—</b><em>L/100</em></div>
+          <div><span class="lbl">Tanque</span><b class="num" data-bind="fuel">—</b><em>%</em></div>
+        </div>
+      </aside>
+    </div>
+
+    <div class="ftr">
+      <span>MAF <b data-bind="maf">—</b> g/s</span>
+      <span>AR <b data-bind="intake">—</b> °C</span>
+      <span>BATERIA <b data-bind="voltage">—</b> V</span>
+      <span>CÂMBIO <b data-bind="gearLabel">D1</b></span>
+      <span>VIAGEM <b data-bind="tripKm">0</b> km</span>
+    </div>
+  </div>
+</template>
+
+<!-- =====================================================================
+     05 · TÉRMICO
+     ===================================================================== -->
+<template id="tpl-thermal">
+  <div class="stage lv-thermal">
+    <div class="hdr">
+      <span class="brand">Yaris OBD</span>
+      <span class="badge"><i></i><span>Adaptador virtual — dados simulados</span></span>
+      <span class="fps"><b data-bind="fps">14</b> fps</span>
+    </div>
+
+    <div class="th-body">
+      <div class="th-hero">
+        <div class="lbl">Temperatura da água</div>
+        <div class="th-val"><b class="num" data-bind="coolant">—</b><span class="unit">°C</span></div>
+        <div class="th-state" data-state>Normal</div>
+        <div class="th-ambient">Ar admitido <b data-bind="intake">—</b> °C</div>
+      </div>
+
+      <div class="th-tube">
+        <div class="th-scale up">110</div>
+        <div class="th-track">
+          <i class="th-fill" data-bind="waterFill"></i>
+          <span class="th-zone" style="bottom: 62.5%"></span>
+          <span class="th-zone" style="bottom: 81.25%"></span>
+        </div>
+        <div class="th-scale down">40</div>
+      </div>
+
+      <aside class="th-aux">
+        <div class="panel th-fan" data-fan>
+          <span class="fan"></span>
+          <div class="th-fan-txt"><span class="lbl">Ventoinha</span><b data-bind="fanLabel">off</b></div>
+        </div>
+        <div class="panel th-mini">
+          <span class="lbl">Avanço de ignição</span>
+          <b class="num" data-bind="timing">—</b><em>°</em>
+        </div>
+        <div class="panel th-mini">
+          <span class="lbl">MAP</span>
+          <b class="num" data-bind="map">—</b><em>kPa</em>
+        </div>
+        <div class="panel th-mini">
+          <span class="lbl">Carga</span>
+          <b class="num" data-bind="load">—</b><em>%</em>
+        </div>
+        <div class="panel th-mini">
+          <span class="lbl">Bateria</span>
+          <b class="num" data-bind="voltage">—</b><em>V</em>
+        </div>
+      </aside>
+    </div>
+
+    <div class="ftr">
+      <span>ÁGUA <b data-bind="coolant">—</b> °C</span>
+      <span>AR <b data-bind="intake">—</b> °C</span>
+      <span>MAF <b data-bind="maf">—</b> g/s</span>
+      <span>COMB <b data-bind="fuel">—</b> %</span>
+      <span>MARCHA <b data-bind="gear">1</b></span>
+    </div>
+  </div>
+</template>
+
+<!-- =====================================================================
+     06 · TENDÊNCIA
+     ===================================================================== -->
+<template id="tpl-trend">
+  <div class="stage lv-trend">
+    <div class="hdr">
+      <span class="brand">Yaris OBD</span>
+      <span class="badge"><i></i><span>Adaptador virtual — dados simulados</span></span>
+      <span class="fps"><b data-bind="fps">14</b> fps</span>
+    </div>
+
+    <div class="tr-body">
+      <div class="tr-row" data-trend="speed">
+        <div class="tr-meta">
+          <span class="tr-name">Velocidade</span>
+          <span class="tr-val"><b class="num" data-bind="speed">—</b><em>km/h</em></span>
+          <span class="tr-range">máx <b data-bind="speedMax">—</b></span>
+        </div>
+        <div class="tr-chart">
+          <svg viewBox="0 0 900 120" preserveAspectRatio="none" aria-hidden="true">
+            <path class="tr-area" data-path="speedArea"></path>
+            <path class="tr-line" data-path="speedLine"></path>
+          </svg>
+        </div>
+      </div>
+
+      <div class="tr-row" data-trend="rpm">
+        <div class="tr-meta">
+          <span class="tr-name">Rotação</span>
+          <span class="tr-val"><b class="num" data-bind="rpm">—</b><em>rpm</em></span>
+          <span class="tr-range">máx <b data-bind="rpmMax">—</b></span>
+        </div>
+        <div class="tr-chart">
+          <svg viewBox="0 0 900 120" preserveAspectRatio="none" aria-hidden="true">
+            <path class="tr-area" data-path="rpmArea"></path>
+            <path class="tr-line" data-path="rpmLine"></path>
+          </svg>
+        </div>
+      </div>
+
+      <div class="tr-row" data-trend="load">
+        <div class="tr-meta">
+          <span class="tr-name">Carga</span>
+          <span class="tr-val"><b class="num" data-bind="load">—</b><em>%</em></span>
+          <span class="tr-range">máx <b data-bind="loadMax">—</b></span>
+        </div>
+        <div class="tr-chart">
+          <svg viewBox="0 0 900 120" preserveAspectRatio="none" aria-hidden="true">
+            <path class="tr-area" data-path="loadArea"></path>
+            <path class="tr-line" data-path="loadLine"></path>
+          </svg>
+        </div>
+      </div>
+
+      <div class="tr-row" data-trend="throttle">
+        <div class="tr-meta">
+          <span class="tr-name">Acelerador</span>
+          <span class="tr-val"><b class="num" data-bind="throttle">—</b><em>%</em></span>
+          <span class="tr-range">máx <b data-bind="throttleMax">—</b></span>
+        </div>
+        <div class="tr-chart">
+          <svg viewBox="0 0 900 120" preserveAspectRatio="none" aria-hidden="true">
+            <path class="tr-area" data-path="throttleArea"></path>
+            <path class="tr-line" data-path="throttleLine"></path>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="tr-axis">
+      <span>−30 s</span>
+      <span>−20 s</span>
+      <span>−10 s</span>
+      <span>agora</span>
+    </div>
+  </div>
+</template>
+
+<!-- =====================================================================
+     07 · RADAR
+     ===================================================================== -->
+<template id="tpl-radar">
+  <div class="stage lv-radar">
+    <div class="hdr">
+      <span class="brand">Yaris OBD</span>
+      <span class="badge"><i></i><span>Adaptador virtual — dados simulados</span></span>
+      <span class="fps"><b data-bind="fps">14</b> fps</span>
+    </div>
+
+    <div class="rd-body">
+      <div class="rd-canvas">
+        <svg viewBox="-100 0 780 640" aria-hidden="true">
+          <g data-rings></g>
+          <g data-axes></g>
+          <g data-axis-labels></g>
+          <polygon class="rd-poly" data-poly points=""></polygon>
+          <g data-dots></g>
+        </svg>
+      </div>
+
+      <aside class="rd-side">
+        <div class="rd-speed">
+          <span class="lbl">Velocidade</span>
+          <div><b class="num" data-bind="speed">—</b><span class="unit">km/h</span></div>
+        </div>
+        <div class="rd-legend" data-legend></div>
+        <div class="rd-foot">Escala normalizada · 6 eixos · leitura agora</div>
+      </aside>
+    </div>
+  </div>
+</template>
+
+<!-- =====================================================================
+     08 · DIAGNÓSTICO
+     ===================================================================== -->
+<template id="tpl-diag">
+  <div class="stage lv-diag">
+    <div class="hdr">
+      <span class="brand">Yaris OBD</span>
+      <span class="badge"><i></i><span>Adaptador virtual — dados simulados</span></span>
+      <span class="fps"><b data-bind="fps">14</b> fps</span>
+    </div>
+
+    <div class="dg-body">
+      <div class="dg-status" data-status>
+        <div class="dg-glyph" data-glyph>✓</div>
+        <b class="dg-title" data-bind="statusTitle">Sistema OK</b>
+        <span class="dg-sub" data-bind="statusSub">Nenhum código confirmado</span>
+        <div class="dg-count">
+          <b class="num" data-bind="dtcCount">0</b>
+          <span>códigos ativos</span>
+        </div>
+        <div class="dg-mil" data-mil>MIL</div>
+        <div class="dg-stats">
+          <span>Taxa de leitura <b data-bind="hz">12</b> Hz</span>
+          <span>Última resposta <b data-bind="lastMs">41</b> ms</span>
+        </div>
+      </div>
+
+      <div class="dg-list">
+        <div class="dg-list-head"><span>Código</span><span>Descrição</span><span>Status</span></div>
+        <div class="dg-rows" data-rows></div>
+        <div class="dg-empty" data-empty>
+          <span class="dg-empty-ico">✓</span>
+          <b>Nenhum código confirmado</b>
+          <span>A leitura terminou sem falhas</span>
+        </div>
+      </div>
+
+      <aside class="dg-health">
+        <div class="lbl">Saúde do enlace</div>
+        <div class="dg-health-rows" data-health></div>
+        <div class="dg-proto">
+          <span>ISO 15765-4 CAN 11/500</span>
+          <span>ELM327 v1.5 · adaptador virtual</span>
+        </div>
+      </aside>
+    </div>
+
+    <div class="dg-foot">
+      <div class="dg-monitors" data-monitors></div>
+      <span class="dg-monitors-note" data-bind="monitorNote">4 de 4 prontos</span>
+    </div>
+  </div>
+</template>
+
+<!-- =====================================================================
+     09 · VIAGEM
+     ===================================================================== -->
+<template id="tpl-trip">
+  <div class="stage lv-trip">
+    <div class="hdr">
+      <span class="brand">Yaris OBD</span>
+      <span class="badge"><i></i><span>Adaptador virtual — dados simulados</span></span>
+      <span class="fps"><b data-bind="fps">14</b> fps</span>
+    </div>
+
+    <div class="tp2-body">
+      <div class="tp2-hero">
+        <div class="lbl">Viagem atual</div>
+        <div class="tp2-dist"><b class="num" data-bind="tripKm">0.0</b><span class="unit">km</span></div>
+        <div class="tp2-time"><b data-bind="tripTime">00:00:00</b><span>tempo ligado</span></div>
+      </div>
+
+      <div class="tp2-cards">
+        <div class="panel"><span class="lbl">Velocidade média</span><div><b class="num" data-bind="avgSpeed">—</b><em>km/h</em></div></div>
+        <div class="panel"><span class="lbl">Consumo médio</span><div><b class="num" data-bind="avgCons">—</b><em>L/100</em></div></div>
+        <div class="panel"><span class="lbl">Autonomia</span><div><b class="num" data-bind="range">—</b><em>km</em></div></div>
+        <div class="panel"><span class="lbl">Combustível usado</span><div><b class="num" data-bind="fuelUsed">—</b><em>L</em></div></div>
+        <div class="panel"><span class="lbl">Consumo agora</span><div><b class="num" data-bind="cons">—</b><em data-bind="consUnit">L/100</em></div></div>
+        <div class="panel tp2-level">
+          <span class="lbl">Nível do tanque</span>
+          <div><b class="num" data-bind="fuel">—</b><em>%</em></div>
+          <div class="track"><i data-bind="fuelFill"></i></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tp2-actions">
+      <button type="button" data-action="resetTrip">Zerar viagem</button>
+      <span>toque para reiniciar os acumulados (no app seria um toque na tela)</span>
+    </div>
+  </div>
+</template>
+
+<!-- =====================================================================
+     10 · DIURNO
+     ===================================================================== -->
+<template id="tpl-day">
+  <div class="stage lv-day">
+    <div class="hdr">
+      <span class="brand">Yaris OBD</span>
+      <span class="badge"><i></i><span>Adaptador virtual — dados simulados</span></span>
+      <span class="fps"><b data-bind="fps">14</b> fps</span>
+    </div>
+
+    <div class="day-body">
+      <div class="day-hero">
+        <div class="lbl">Velocidade</div>
+        <div class="day-speed"><b class="num" data-bind="speed">—</b><span>km/h</span></div>
+        <div class="day-rpm">
+          <div class="row"><span class="lbl">Rotação</span><b data-bind="rpm">—</b><em>rpm</em></div>
+          <div class="track"><i data-bind="rpmFill"></i></div>
+        </div>
+      </div>
+
+      <div class="day-tiles">
+        <div class="tile"><span class="lbl">Água</span><b class="num" data-bind="coolant">—</b><em>°C</em></div>
+        <div class="tile"><span class="lbl">Ar admitido</span><b class="num" data-bind="intake">—</b><em>°C</em></div>
+        <div class="tile"><span class="lbl">Carga</span><b class="num" data-bind="load">—</b><em>%</em></div>
+        <div class="tile"><span class="lbl">Acelerador</span><b class="num" data-bind="throttle">—</b><em>%</em></div>
+        <div class="tile"><span class="lbl">Bateria</span><b class="num" data-bind="voltage">—</b><em>V</em></div>
+        <div class="tile"><span class="lbl">Combustível</span><b class="num" data-bind="fuel">—</b><em>%</em></div>
+      </div>
+    </div>
+
+    <div class="ftr">
+      <span>MAP <b data-bind="map">—</b> kPa</span>
+      <span>MAF <b data-bind="maf">—</b> g/s</span>
+      <span>MARCHA <b data-bind="gear">1</b></span>
+      <span>TEMA CLARO · para uso diurno</span>
+    </div>
+  </div>
+</template>
+
+<!-- =====================================================================
+     11 · HUD
+     ===================================================================== -->
+<template id="tpl-hud">
+  <div class="stage lv-hud">
+    <div class="hdr">
+      <span class="brand">Yaris OBD</span>
+      <span class="badge hud-badge"><i></i><span>Adaptador virtual — dados simulados</span></span>
+      <span class="fps"><b data-bind="fps">14</b> fps</span>
+    </div>
+
+    <div class="hud-body">
+      <div class="hud-speed"><b class="num" data-bind="speed">—</b><span>km/h</span></div>
+      <div class="hud-bar"><i data-bind="rpmFill"></i></div>
+      <div class="hud-row">
+        <span>MARCHA <b data-bind="gearLabel">D1</b></span>
+        <span>ÁGUA <b data-bind="coolant">—</b> °C</span>
+        <span>COMB <b data-bind="fuel">—</b> %</span>
+        <span>BAT <b data-bind="voltage">—</b> V</span>
+      </div>
+    </div>
+
+    <div class="hud-shift" data-shift>SHIFT</div>
+  </div>
+</template>
+
+<!-- =====================================================================
+     12 · MOSAICO
+     ===================================================================== -->
+<template id="tpl-bento">
+  <div class="stage lv-bento">
+    <div class="hdr">
+      <span class="brand">Yaris OBD</span>
+      <span class="badge"><i></i><span>Adaptador virtual — dados simulados</span></span>
+      <span class="fps"><b data-bind="fps">14</b> fps</span>
+    </div>
+
+    <div class="bt-grid">
+      <div class="bt-card bt-hero">
+        <span class="lbl">Velocidade</span>
+        <b class="num" data-bind="speed">—</b>
+        <span class="unit">km/h</span>
+        <div class="bt-hero-foot">
+          <span>MARCHA <b data-bind="gearLabel">D1</b></span>
+          <span>VIAGEM <b data-bind="tripKm">0</b> km</span>
+        </div>
+      </div>
+
+      <div class="bt-card bt-ring" data-ringcard="rpm">
+        <svg viewBox="0 0 160 160" aria-hidden="true">
+          <circle class="rb" cx="80" cy="80" r="62"></circle>
+          <circle class="rf" data-ring cx="80" cy="80" r="62" transform="rotate(-90 80 80)"></circle>
+        </svg>
+        <div class="bt-ring-in">
+          <b class="num" data-bind="rpm">—</b>
+          <span>rotação</span>
+        </div>
+      </div>
+
+      <div class="bt-card bt-ring" data-ringcard="coolant">
+        <svg viewBox="0 0 160 160" aria-hidden="true">
+          <circle class="rb" cx="80" cy="80" r="62"></circle>
+          <circle class="rf" data-ring cx="80" cy="80" r="62" transform="rotate(-90 80 80)"></circle>
+        </svg>
+        <div class="bt-ring-in">
+          <b class="num" data-bind="coolant">—</b>
+          <span>água °C</span>
+        </div>
+      </div>
+
+      <div class="bt-card bt-small">
+        <span class="lbl">Carga</span>
+        <div><b class="num" data-bind="load">—</b><em>%</em></div>
+        <div class="track"><i data-bind="loadFill"></i></div>
+      </div>
+
+      <div class="bt-card bt-small">
+        <span class="lbl">Acelerador</span>
+        <div><b class="num" data-bind="throttle">—</b><em>%</em></div>
+        <div class="track"><i data-bind="throttleFill"></i></div>
+      </div>
+
+      <div class="bt-card bt-small">
+        <span class="lbl">Bateria</span>
+        <div><b class="num" data-bind="voltage">—</b><em>V</em></div>
+        <div class="track"><i data-bind="voltFill"></i></div>
+      </div>
+
+      <div class="bt-card bt-small">
+        <span class="lbl">Combustível</span>
+        <div><b class="num" data-bind="fuel">—</b><em>%</em></div>
+        <div class="track"><i data-bind="fuelFill"></i></div>
+      </div>
+    </div>
+
+    <div class="ftr">
+      <span>MAP <b data-bind="map">—</b> kPa</span>
+      <span>MAF <b data-bind="maf">—</b> g/s</span>
+      <span>AR <b data-bind="intake">—</b> °C</span>
+      <span>IGNIÇÃO <b data-bind="timing">—</b> °</span>
+      <span>COMB <b data-bind="fuel">—</b> %</span>
+    </div>
+  </div>
+</template>
+
+<noscript>Ative o JavaScript para ver os layouts animados.</noscript>
+
+<script src="js/sim.js"></script>
+<script src="js/screens.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

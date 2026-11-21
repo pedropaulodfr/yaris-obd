@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+      Paleta do painel. Tema escuro obrigatorio para uso automotivo: a maior
+      parte do tempo a tela e vista a noite ou em contraluz, e o Android Auto
+      tambem exige que apps suportem o modo escuro.
+    -->
+    <color name="bg">#FF0B0F14</color>
+    <color name="surface">#FF141B23</color>
+    <color name="surface2">#FF1A2430</color>
+    <color name="line">#FF22303F</color>
+    <color name="text_primary">#FFE8EEF4</color>
+    <color name="text_secondary">#FF8A99A8</color>
+    <color name="text_tertiary">#FF5C6B7A</color>
+    <color name="accent">#FF35C2FF</color>
+    <color name="warn">#FFFFB020</color>
+    <color name="danger">#FFFF4D4F</color>
+    <color name="ok">#FF2FD07A</color>
+    <color name="violet">#FF9C8CFF</color>
+
+    <!-- Tema claro do layout "Diurno" -->
+    <color name="day_bg">#FFF2F5F8</color>
+    <color name="day_surface">#FFFFFFFF</color>
+    <color name="day_line">#FFD7DFE7</color>
+    <color name="day_text">#FF101820</color>
+    <color name="day_dim">#FF5A6A78</color>
+</resources>

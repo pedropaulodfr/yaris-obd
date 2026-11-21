@@ -1,0 +1,35 @@
+﻿Android Developers
+Develop
+Devices
+Android for Cars
+Use the Android for Cars App Library
+Stay organized with collections
+Save and categorize content based on your preferences.
+Use the Android for Cars App Library, androidx.car.app , to bring your
+navigation , point of interest (POI) , Internet of Things (IoT) ,
+and weather apps to the car. The library provides a set of templates
+designed to meet driver distraction standards and to address details such as the
+variety of car screen factors and input modalities.
+This guide provides an overview of the library's key features and concepts and
+walks you through the process of setting up a basic app.
+Codelab
+Learn Car App Library fundamentals
+arrow_forward
+Important: Google takes driver distraction very seriously. Your app must belong
+to one of the supported categories and meet specific design requirements before
+it can be listed on Google Play for Android Auto and Android Automotive OS. By
+adhering to these requirements, you can make it easier to build and test your
+app. For more information, see Android app quality for cars .
+Before you begin
+Review the Design for Driving pages specific to the Car App Library:
+Navigation apps and other driving-related apps category overviews
+Build apps with templates overview
+Building blocks specific to Templates and
+Template components
+Sample flows that demonstrate common user experience (UX) patterns
+Templated app requirements
+Review the Terms and concepts .
+Become familiar with the Android Auto System UI and
+Android Automotive OS design .
+See the Release Notes .
+See the Code samples .

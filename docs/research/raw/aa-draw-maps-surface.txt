@@ -1,0 +1,149 @@
+﻿Android Developers
+Develop
+Devices
+Android for Cars
+Draw maps
+Stay organized with collections
+Save and categorize content based on your preferences.
+Navigation, point of interest (POI), and weather apps using the following
+templates can draw maps by accessing a Surface .
+To use the following templates, your app must declare one of these
+corresponding permissions in a <uses-permission> element in the
+AndroidManifest.xml file.
+Template |
+Permission |
+Guidance |
+NavigationTemplate |
+androidx.car.app.NAVIGATION_TEMPLATES |
+Navigation |
+MapWithContentTemplate |
+androidx.car.app.NAVIGATION_TEMPLATES
+or,
+androidx.car.app.MAP_TEMPLATES
+|
+Navigation ,
+POI ,
+Weather
+|
+MapTemplate
+( deprecated )
+|
+androidx.car.app.NAVIGATION_TEMPLATES |
+Navigation |
+PlaceListNavigationTemplate
+( deprecated )
+|
+androidx.car.app.NAVIGATION_TEMPLATES |
+Navigation |
+RoutePreviewNavigationTemplate
+( deprecated )
+|
+androidx.car.app.NAVIGATION_TEMPLATES |
+Navigation |
+See the reference implementation
+To view a complete reference implementation, see Navigation Sample .
+Declare the surface permission
+In addition to the permission required for the template that your app is using,
+your app must declare the androidx.car.app.ACCESS_SURFACE permission in its
+AndroidManifest.xml file to get access to the surface:
+<manifest ...>
+...
+<uses-permission android:name="androidx.car.app.ACCESS_SURFACE" />
+...
+</manifest>
+Access the surface
+To access the Surface that the host provides, you must implement a
+SurfaceCallback and provide that implementation to the AppManager
+car service. The current Surface is passed to your SurfaceCallback in the
+SurfaceContainer parameter of the onSurfaceAvailable() and
+onSurfaceDestroyed() callbacks.
+Kotlin
+carContext . getCarService ( AppManager :: class . java ). setSurfaceCallback ( surfaceCallback )
+Java
+carContext . getCarService ( AppManager . class ). setSurfaceCallback ( surfaceCallback );
+Use a virtual display to render content
+In addition to rendering directly into the Surface using the Canvas API,
+you can also render Views into the Surface using the VirtualDisplay and
+Presentation APIs, as this example shows:
+class HelloWorldSurfaceCallback ( context : Context ) : SurfaceCallback {
+lateinit var virtualDisplay : VirtualDisplay
+lateinit var presentation : Presentation
+override fun onSurfaceAvailable ( surfaceContainer : SurfaceContainer ) {
+virtualDisplay = context
+. getSystemService ( DisplayManager :: class . java )
+. createVirtualDisplay (
+VIRTUAL_DISPLAY_NAME ,
+surfaceContainer . width ,
+surfaceContainer . height ,
+surfaceContainer . dpi ,
+surfaceContainer . surface ,
+0
+)
+presentation = Presentation ( context , virtualDisplay . display )
+// Instantiate the view to be used as the content view
+val view = ...
+presentation . setContentView ( view )
+presentation . show ()
+}
+override fun onSurfaceDestroyed ( surfaceContainer : SurfaceContainer ) {
+presentation . dismiss ()
+// This handles releasing the Surface provided when creating the VirtualDisplay
+virtualDisplay . release ()
+}
+}
+Use Compose to render to the virtual display
+You can use a ComposeView as the content view of the Presentation . Because
+ComposeView is used outside an activity, confirm that it or a parent view
+propagates a LifecycleOwner and SavedStateRegistryOwner . To do this, use
+setViewTreeLifecycleOwner and setViewTreeSavedStateRegistryOwner .
+Session already implements LifecycleOwner . To serve both roles, your
+implementation can additionally implement SavedStateRegistryOwner .
+class HelloWorldSession () : Session (), SavedStateRegistryOwner { ... }
+class HelloWorldSurfaceCallback ( session : HelloWorldSession ) : SurfaceCallback {
+...
+override fun onSurfaceAvailable ( surfaceContainer : SurfaceContainer ) {
+...
+val view = ComposeView ( session . carContext )
+view . setViewTreeLifecycleOwner ( session )
+view . setViewTreeSavedStateRegistryOwner ( session )
+view . setContent {
+// Composable content
+}
+presentation . setContentView ( view )
+presentation . show ()
+}
+...
+}
+Understand the surface visible area
+The host can draw user interface elements for the templates on top of the map.
+The host calls the SurfaceCallback.onVisibleAreaChanged method
+to communicate the area of the surface most likely to be unobstructed and
+visible to the user.
+To minimize the number of changes, the host calls the
+SurfaceCallback.onStableAreaChanged method with the smallest rectangle,
+which is always visible according to the current template.
+For example, when a navigation app uses the NavigationTemplate with an
+action strip on top, to make more space on the screen the action strip can
+be concealed when the user hasn't interacted with the screen. This case results
+in a callback to onStableAreaChanged and onVisibleAreaChanged with the same
+rectangle.
+When the action strip is concealed, only onVisibleAreaChanged is called with
+the larger area. If the user interacts with the screen, only
+onVisibleAreaChanged is called with the first rectangle.
+Support dark theme
+Apps must redraw their map onto the Surface instance with the proper dark
+colors when the host determines conditions warrant it, as described in
+Android app quality for cars .
+To draw a dark map, use the CarContext.isDarkMode method. When dark
+theme status changes, you receive a call to
+Session.onCarConfigurationChanged .
+Important: By default, apps must draw with light colors and support the dark
+theme, as described. However, apps can allow users to persistently display the
+app in either the light or dark theme.
+Draw maps on the cluster display
+In addition to drawing maps on the main display, navigation apps can also
+support drawing maps on the cluster display behind the steering wheel.
+To learn more, see Drawing to the cluster display .
+Next
+Let users interact with your map
+arrow_forward

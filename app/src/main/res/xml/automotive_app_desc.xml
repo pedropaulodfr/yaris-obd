@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Declaracao de capacidade lida pelo host do Android Auto para descobrir o app.
+  "template" = app construido com a Android for Cars App Library.
+  Referencia: developer.android.com/training/cars/apps/auto
+-->
+<automotiveApp>
+    <uses name="template" />
+</automotiveApp>

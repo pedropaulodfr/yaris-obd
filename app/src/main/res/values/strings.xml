@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Yaris OBD</string>
+
+    <string name="screen_dashboard">Painel</string>
+    <string name="screen_diagnostics">Diagnóstico</string>
+    <string name="screen_style">Estilo do painel</string>
+    <string name="screen_menu">Menu</string>
+    <string name="screen_dtc">Códigos de falha</string>
+    <string name="action_clear_dtc">Limpar</string>
+    <string name="clear_dtc_title">Limpar códigos?</string>
+    <string name="clear_dtc_blocked">Veículo em movimento</string>
+    <string name="action_cancel">Cancelar</string>
+    <string name="action_erase_codes">Apagar códigos</string>
+    <string name="action_details">Detalhes</string>
+    <string name="action_dtc">Códigos</string>
+
+    <string name="label_speed">km/h</string>
+    <string name="label_rpm">RPM</string>
+    <string name="label_coolant">Água</string>
+    <string name="label_throttle">Acelerador</string>
+    <string name="label_load">Carga</string>
+    <string name="label_map">MAP</string>
+    <string name="label_maf">MAF</string>
+    <string name="label_voltage">Bateria</string>
+
+    <string name="demo_banner">SIMULAÇÃO — sem dados do veículo</string>
+    <string name="waiting_scanner">Aguardando scanner OBD2</string>
+    <string name="unavailable">—</string>
+</resources>

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!--
+      Permissoes exigidas pela Android for Cars App Library para receber uma
+      Surface do host e desenhar nela. Ambas sao "normal permissions" declaradas
+      pelo proprio app: nao ha assinatura nem aprovacao de Play envolvida.
+      Referencia: developer.android.com/training/cars/apps/library/draw-maps
+    -->
+    <uses-permission android:name="androidx.car.app.ACCESS_SURFACE" />
+    <uses-permission android:name="androidx.car.app.NAVIGATION_TEMPLATES" />
+
+    <!-- Bluetooth: scanner OBD2 físico. Nos Android antigos o pareamento/scan
+         depende de localização; no 12+ são permissões próprias de Bluetooth. -->
+    <uses-permission android:name="android.permission.BLUETOOTH" android:maxSdkVersion="30" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" android:maxSdkVersion="30" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" android:maxSdkVersion="30" />
+    <uses-permission
+        android:name="android.permission.BLUETOOTH_SCAN"
+        android:usesPermissionFlags="neverForLocation" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+    <uses-feature android:name="android.hardware.bluetooth_le" android:required="false" />
+
+    <!-- Mantém a leitura viva enquanto o app está projetado, mesmo se o usuário
+         abrir outro aplicativo no celular. -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <!--
+      O Android 11+ esconde os outros apps do processo, a menos que o pacote seja
+      declarado aqui. Sem isto, getLaunchIntentForPackage() devolve null mesmo
+      com o Android Auto instalado.
+    -->
+    <queries>
+        <package android:name="com.google.android.projection.gearhead" />
+    </queries>
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_app"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.YarisObd">
+
+        <!-- Tela do celular: status, instrucoes e diagnostico da instalacao. -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- Serviço que mantém o processo vivo durante a projeção. -->
+        <service
+            android:name=".obd.ObdForegroundService"
+            android:exported="false"
+            android:foregroundServiceType="connectedDevice" />
+
+        <!--
+          Servico descoberto pelo Android Auto. A categoria declara o tipo de
+          app; IOT e a categoria de template que melhor descreve telemetria de
+          terceiros (nao ha categoria "painel/dashboard" na biblioteca).
+        -->
+        <service
+            android:name=".car.ObdCarAppService"
+            android:exported="true"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="androidx.car.app.CarAppService" />
+                <!--
+                  Categoria configurável no build (default IOT):
+                    -PcarCategory=androidx.car.app.category.IOT
+                    -PcarCategory=androidx.car.app.category.NAVIGATION
+                  NAVIGATION é a categoria que a documentação associa ao
+                  NavigationTemplate + ACCESS_SURFACE, que é o mecanismo de
+                  desenho livre usado pelo painel.
+                -->
+                <category android:name="${carCategory}" />
+            </intent-filter>
+        </service>
+
+        <meta-data
+            android:name="com.google.android.gms.car.application"
+            android:resource="@xml/automotive_app_desc" />
+        <meta-data
+            android:name="androidx.car.app.minCarApiLevel"
+            android:value="1" />
+    </application>
+</manifest>

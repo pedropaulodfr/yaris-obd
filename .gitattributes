@@ -1,0 +1,13 @@
+# Normaliza fim de linha: LF no repositorio
+* text=auto eol=lf
+
+# Scripts que precisam continuar CRLF/executaveis
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+gradlew text eol=lf
+*.jar binary
+*.apk binary
+*.png binary
+*.jpg binary
+*.webp binary

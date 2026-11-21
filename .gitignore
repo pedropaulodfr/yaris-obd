@@ -1,0 +1,42 @@
+# --- Android / Gradle ---
+.gradle/
+.kotlin/
+build/
+local.properties
+captures/
+.cxx/
+.externalNativeBuild/
+
+# --- IDE ---
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+.DS_Store
+Thumbs.db
+
+# --- Build e saidas ---
+app/build/
+*.apk
+*.aab
+*.ap_
+*.dex
+*.class
+build-log.txt
+*.hprof
+
+# --- Assinatura (nunca versionar) ---
+*.jks
+*.keystore
+keystore.properties
+signing.properties
+
+# --- APKs de terceiros (baixe dos releases oficiais) ---
+tools/apk/
+
+# --- Logs (inclui docs/research/raw/aa-car-session.log, 35 MB) ---
+*.log
+
+# --- Temporarios ---
+tmp/
